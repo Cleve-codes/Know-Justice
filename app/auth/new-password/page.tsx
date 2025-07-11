@@ -106,8 +106,8 @@ export default function NewPasswordPage() {
             </svg>
           </div>
           <div>
-            <h2 className="text-2xl font-bold text-gray-900">Password Updated!</h2>
-            <p className="mt-2 text-gray-600">Your password has been successfully updated.</p>
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-300">Password Updated!</h2>
+            <p className="mt-2 text-gray-600 dark:text-gray-200">Your password has been successfully updated.</p>
           </div>
           <p className="text-sm text-gray-500">Redirecting to login...</p>
         </div>
@@ -122,9 +122,9 @@ export default function NewPasswordPage() {
           <Link href="/auth/forgot-password">
             <ArrowLeft className="h-6 w-6 text-gray-600 mx-auto mb-4" />
           </Link>
-          <h1 className="text-3xl font-bold text-primary-700">Know Freedom</h1>
-          <h2 className="mt-6 text-2xl font-bold text-gray-900">Create New Password</h2>
-          <p className="mt-2 text-gray-600">Your new password must be different from previously used passwords.</p>
+          <h1 className="text-3xl font-bold text-primary-700 dark:text-primary-300">Know Freedom</h1>
+          <h2 className="mt-6 text-2xl font-bold text-gray-900 dark:text-primary-400">Create New Password</h2>
+          <p className="mt-2 text-gray-600 dark:text-gray-300">Your new password must be different from previously used passwords.</p>
         </div>
         <div ref={formRef}>
           <form onSubmit={handleSubmit} className="space-y-6">
@@ -136,6 +136,8 @@ export default function NewPasswordPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 error={errors.password}
+                labelClassName="text-gray-700 dark:text-gray-200 font-medium"
+                className="bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
               />
               <button
                 type="button"
@@ -154,6 +156,8 @@ export default function NewPasswordPage() {
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 error={errors.confirmPassword}
+                labelClassName="text-gray-700 dark:text-gray-200 font-medium"
+                className="bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
               />
               <button
                 type="button"
@@ -166,7 +170,7 @@ export default function NewPasswordPage() {
 
             {/* Password Requirements */}
             <div className="space-y-2">
-              <p className="text-sm font-medium text-gray-700">Password must contain:</p>
+              <p className="text-sm font-medium text-gray-700 dark:text-gray-300">Password must contain:</p>
               <div className="space-y-1">
                 {passwordRequirements.map((req, index) => {
                   const isValid = req.test(password)

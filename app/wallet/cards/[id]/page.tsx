@@ -163,6 +163,32 @@ export default function CardDetailPage() {
             </Button>
           )}
         </div>
+
+        {/* Recent Transactions for Large Screens */}
+        <div className="hidden md:block mt-8">
+          <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Recent Transactions</h2>
+          {Array.isArray(card.transactions) && card.transactions.length > 0 ? (
+            <div className="space-y-3">
+              {card.transactions.map((tx: any) => (
+                <Card key={tx.id} className="bg-white dark:bg-[#23244a]">
+                  <CardContent className="p-4 flex items-center justify-between">
+                    <div>
+                      <p className="font-medium text-gray-900 dark:text-gray-100">{tx.description}</p>
+                      <p className="text-sm text-gray-500 dark:text-gray-300">{tx.date}</p>
+                    </div>
+                    <div className="text-right">
+                      <p className={`font-semibold ${tx.type === "credit" ? "text-green-600 dark:text-green-400" : "text-gray-900 dark:text-gray-100"}`}>
+                        {tx.type === "credit" ? "+" : "-"}{tx.amount}
+                      </p>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          ) : (
+            <p className="text-gray-500 dark:text-gray-300">No recent transactions for this card.</p>
+          )}
+        </div>
       </div>
     </div>
   )

@@ -189,11 +189,13 @@ export default function BankCardsPage() {
           ))}
         </div>
         {/* Floating Action Button */}
-        <div ref={actionsRef} className="fixed bottom-6 right-6">
+        <div ref={actionsRef} className="fixed bottom-6 right-6 flex items-center space-x-2">
           <Dialog open={showAddCard} onOpenChange={setShowAddCard}>
             <DialogTrigger asChild>
-              <Button size="lg" className="rounded-full h-14 w-14 shadow-lg">
+              <Button size="lg" className="rounded-full h-14 w-14 shadow-lg flex items-center justify-center">
                 <Plus className="h-6 w-6" />
+                <span className="hidden md:inline ml-2 font-semibold">Add Card</span>
+                <span className="md:hidden ml-2 font-semibold">Add Card</span>
               </Button>
             </DialogTrigger>
             <DialogContent>

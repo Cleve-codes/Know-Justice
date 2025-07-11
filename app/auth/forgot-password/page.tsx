@@ -88,8 +88,8 @@ export default function ForgotPasswordPage() {
             </svg>
           </div>
           <div>
-            <h2 className="text-2xl font-bold text-gray-900">Check your email</h2>
-            <p className="mt-2 text-gray-600">
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Check your email</h2>
+            <p className="mt-2 text-gray-600 dark:text-gray-300">
               We've sent a password reset link to <strong>{email}</strong>
             </p>
           </div>
@@ -107,7 +107,7 @@ export default function ForgotPasswordPage() {
             <ArrowLeft className="h-6 w-6 text-gray-600 mx-auto mb-4" />
           </Link>
           <h1 className="text-3xl font-bold text-primary-700 dark:text-primary-300">Know Freedom</h1>
-          <h2 className="mt-6 text-2xl font-bold text-gray-900 dark:text-primary-400">Forgot Password?</h2>
+          <h2 className="mt-6 text-2xl font-bold text-gray-900 dark:text-primary-200">Forgot Password?</h2>
           <p className="mt-2 text-gray-600 dark:text-gray-300">
             Enter your email address and we'll send you a link to reset your password.
           </p>
