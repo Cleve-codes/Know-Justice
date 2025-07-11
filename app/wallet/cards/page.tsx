@@ -8,10 +8,14 @@ import { useAuth } from "@/contexts/auth-context"
 import { ArrowLeft, Plus, CreditCard } from "lucide-react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { useEffect, useState } from "react"
+import { useEffect, useState, useRef } from "react"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogTrigger } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { useToast } from "@/hooks/use-toast"
+import gsap from "gsap"
+import { useGSAP } from "@gsap/react"
+
+gsap.registerPlugin(useGSAP)
 
 export default function BankCardsPage() {
   const { user, isLoading } = useAuth()
@@ -26,6 +30,30 @@ export default function BankCardsPage() {
     bankName: "",
     cardType: "visa" as "visa" | "mastercard" | "amex"
   })
+
+  const container = useRef<HTMLDivElement>(null)
+  const headerRef = useRef<HTMLDivElement>(null)
+  const cardsRef = useRef<HTMLDivElement>(null)
+  const actionsRef = useRef<HTMLDivElement>(null)
+
+  useGSAP(() => {
+    gsap.set([
+      headerRef.current,
+      cardsRef.current,
+      actionsRef.current
+    ], { opacity: 0, y: 40 })
+    gsap.to([
+      headerRef.current,
+      cardsRef.current,
+      actionsRef.current
+    ], {
+      opacity: 1,
+      y: 0,
+      duration: 0.6,
+      ease: "power2.out",
+      stagger: 0.15
+    })
+  }, { dependencies: [], scope: container })
 
   useEffect(() => {
     if (!isLoading && !user) {
@@ -115,19 +143,17 @@ export default function BankCardsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+    <div ref={container} className="min-h-screen bg-gray-50 dark:bg-gray-900">
       {/* Header */}
-      <div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-4 py-4">
-        <div className="flex items-center space-x-3">
-          <Link href="/">
-            <ArrowLeft className="h-6 w-6 text-gray-600 dark:text-gray-300" />
-          </Link>
-          <h1 className="text-lg font-semibold text-gray-900 dark:text-gray-100">My Cards</h1>
-        </div>
+      <div ref={headerRef} className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-4 py-4 flex items-center space-x-3">
+        <Link href="/">
+          <ArrowLeft className="h-6 w-6 text-gray-600 dark:text-gray-300" />
+        </Link>
+        <h1 className="text-lg font-semibold text-gray-900 dark:text-gray-100">My Cards</h1>
       </div>
-      <div className="px-4 py-6">
+      <div className="px-4 py-6 space-y-6">
         {/* Cards List */}
-        <div className="space-y-4">
+        <div ref={cardsRef} className="space-y-4">
           {cards.map((card) => (
             <Card
               key={card.id}
@@ -162,71 +188,71 @@ export default function BankCardsPage() {
             </Card>
           ))}
         </div>
-      </div>
-      {/* Floating Action Button */}
-      <div className="fixed bottom-6 right-6">
-        <Dialog open={showAddCard} onOpenChange={setShowAddCard}>
-          <DialogTrigger asChild>
-            <Button size="lg" className="rounded-full h-14 w-14 shadow-lg">
-              <Plus className="h-6 w-6" />
-            </Button>
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Add New Card</DialogTitle>
-            </DialogHeader>
-            <form onSubmit={handleAddCard} className="space-y-4">
-              <Input
-                label="Card Number"
-                value={newCard.cardNumber}
-                onChange={e => setNewCard({ ...newCard, cardNumber: e.target.value })}
-                required
-                labelClassName="text-gray-700 dark:text-gray-200 font-medium"
-                className="bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
-              />
-              <Input
-                label="Card Holder"
-                value={newCard.cardHolder}
-                onChange={e => setNewCard({ ...newCard, cardHolder: e.target.value })}
-                required
-                labelClassName="text-gray-700 dark:text-gray-200 font-medium"
-                className="bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
-              />
-              <Input
-                label="Expiry Date"
-                placeholder="MM/YY"
-                value={newCard.expiryDate}
-                onChange={e => setNewCard({ ...newCard, expiryDate: e.target.value })}
-                required
-                labelClassName="text-gray-700 dark:text-gray-200 font-medium"
-                className="bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
-              />
-              <Input
-                label="Bank Name"
-                value={newCard.bankName}
-                onChange={e => setNewCard({ ...newCard, bankName: e.target.value })}
-                required
-                labelClassName="text-gray-700 dark:text-gray-200 font-medium"
-                className="bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
-              />
-              <div>
-                <label className="text-sm font-medium text-gray-700 dark:text-gray-200">Card Type</label>
-                <select
-                  className="w-full mt-1 border rounded p-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
-                  value={newCard.cardType}
-                  onChange={e => setNewCard({ ...newCard, cardType: e.target.value as any })}
-                >
-                  <option value="visa">Visa</option>
-                  <option value="mastercard">Mastercard</option>
-                  <option value="amex">Amex</option>
-                </select>
-              </div>
-              <DialogFooter>
-                <Button type="submit">Add Card</Button>
-              </DialogFooter>
-            </form>
-          </DialogContent>
-        </Dialog>
+        {/* Floating Action Button */}
+        <div ref={actionsRef} className="fixed bottom-6 right-6">
+          <Dialog open={showAddCard} onOpenChange={setShowAddCard}>
+            <DialogTrigger asChild>
+              <Button size="lg" className="rounded-full h-14 w-14 shadow-lg">
+                <Plus className="h-6 w-6" />
+              </Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Add New Card</DialogTitle>
+              </DialogHeader>
+              <form onSubmit={handleAddCard} className="space-y-4">
+                <Input
+                  label="Card Number"
+                  value={newCard.cardNumber}
+                  onChange={e => setNewCard({ ...newCard, cardNumber: e.target.value })}
+                  required
+                  labelClassName="text-gray-700 dark:text-gray-200 font-medium"
+                  className="bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
+                />
+                <Input
+                  label="Card Holder"
+                  value={newCard.cardHolder}
+                  onChange={e => setNewCard({ ...newCard, cardHolder: e.target.value })}
+                  required
+                  labelClassName="text-gray-700 dark:text-gray-200 font-medium"
+                  className="bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
+                />
+                <Input
+                  label="Expiry Date"
+                  placeholder="MM/YY"
+                  value={newCard.expiryDate}
+                  onChange={e => setNewCard({ ...newCard, expiryDate: e.target.value })}
+                  required
+                  labelClassName="text-gray-700 dark:text-gray-200 font-medium"
+                  className="bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
+                />
+                <Input
+                  label="Bank Name"
+                  value={newCard.bankName}
+                  onChange={e => setNewCard({ ...newCard, bankName: e.target.value })}
+                  required
+                  labelClassName="text-gray-700 dark:text-gray-200 font-medium"
+                  className="bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
+                />
+                <div>
+                  <label className="text-sm font-medium text-gray-700 dark:text-gray-200">Card Type</label>
+                  <select
+                    className="w-full mt-1 border rounded p-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
+                    value={newCard.cardType}
+                    onChange={e => setNewCard({ ...newCard, cardType: e.target.value as any })}
+                  >
+                    <option value="visa">Visa</option>
+                    <option value="mastercard">Mastercard</option>
+                    <option value="amex">Amex</option>
+                  </select>
+                </div>
+                <DialogFooter>
+                  <Button type="submit">Add Card</Button>
+                </DialogFooter>
+              </form>
+            </DialogContent>
+          </Dialog>
+        </div>
       </div>
     </div>
   )

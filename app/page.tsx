@@ -8,12 +8,16 @@ import { useAuth } from "@/contexts/auth-context"
 import { ArrowLeft, Plus, Send, TrendingUp, LogOut } from "lucide-react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { useEffect, useState } from "react"
+import { useEffect, useState, useRef } from "react"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogTrigger } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { useToast } from "@/hooks/use-toast"
 import { Toaster } from "@/components/ui/toaster"
 import { ThemeToggle } from "@/components/theme-provider"
+import gsap from "gsap"
+import { useGSAP } from "@gsap/react"
+
+gsap.registerPlugin(useGSAP)
 
 export default function WalletOverview() {
   const { user, logout, isLoading } = useAuth()
@@ -27,6 +31,28 @@ export default function WalletOverview() {
   const [paymentDesc, setPaymentDesc] = useState("")
   const [paymentCard, setPaymentCard] = useState("")
   const [transactions, setTransactions] = useState([...mockTransactions])
+  const container = useRef<HTMLDivElement>(null)
+  const headerRef = useRef<HTMLDivElement>(null)
+  const walletsRef = useRef<HTMLDivElement>(null)
+  const actionsRef = useRef<HTMLDivElement>(null)
+  const transactionsRef = useRef<HTMLDivElement>(null)
+
+  useGSAP(() => {
+    const elements = [
+      headerRef.current,
+      walletsRef.current,
+      actionsRef.current,
+      transactionsRef.current
+    ].filter(Boolean)
+    gsap.set(elements, { opacity: 0, y: 40 })
+    gsap.to(elements, {
+      opacity: 1,
+      y: 0,
+      duration: 0.6,
+      ease: "power2.out",
+      stagger: 0.15
+    })
+  }, { dependencies: [], scope: container })
 
   useEffect(() => {
     if (!isLoading && !user) {
@@ -85,9 +111,9 @@ export default function WalletOverview() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+    <div ref={container} className="min-h-screen bg-gray-50 dark:bg-gray-900">
       {/* Header */}
-      <div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-4 py-4">
+      <div ref={headerRef} className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-4 py-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
             <ArrowLeft className="h-6 w-6 text-gray-600 dark:text-gray-300" />
@@ -112,7 +138,7 @@ export default function WalletOverview() {
 
       <div className="px-4 py-6 space-y-6">
         {/* Wallets List */}
-        <div className="space-y-4">
+        <div ref={walletsRef} className="space-y-4">
           {wallets.map((wallet) => (
             <Card key={wallet.id} className="bg-gradient-to-r from-primary-700 to-primary-800 text-white">
               <CardContent className="p-6">
@@ -132,7 +158,7 @@ export default function WalletOverview() {
         </div>
 
         {/* Action Buttons */}
-        <div className="grid grid-cols-2 gap-4">
+        <div ref={actionsRef} className="grid grid-cols-2 gap-4">
           <Dialog open={showAddPayment} onOpenChange={setShowAddPayment}>
             <DialogTrigger asChild>
               <Button size="lg" className="h-14">
@@ -191,7 +217,7 @@ export default function WalletOverview() {
         </div>
 
         {/* Recent Transactions */}
-        <div className="space-y-4">
+        <div ref={transactionsRef} className="space-y-4">
           <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Recent Transactions</h2>
           <div className="space-y-3">
             {transactions.map((transaction, idx) => (

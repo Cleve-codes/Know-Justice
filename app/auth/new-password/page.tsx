@@ -1,6 +1,9 @@
 "use client"
 
 import type React from "react"
+import { useRef } from "react"
+import gsap from "gsap"
+import { useGSAP } from "@gsap/react"
 
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -9,6 +12,8 @@ import Link from "next/link"
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { useToast } from "@/hooks/use-toast"
+
+gsap.registerPlugin(useGSAP)
 
 export default function NewPasswordPage() {
   const [password, setPassword] = useState("")
@@ -67,6 +72,30 @@ export default function NewPasswordPage() {
     }, 1500)
   }
 
+  const container = useRef<HTMLDivElement>(null)
+  const headerRef = useRef<HTMLDivElement>(null)
+  const formRef = useRef<HTMLDivElement>(null)
+  const footerRef = useRef<HTMLDivElement>(null)
+
+  useGSAP(() => {
+    gsap.set([
+      headerRef.current,
+      formRef.current,
+      footerRef.current
+    ], { opacity: 0, y: 40 })
+    gsap.to([
+      headerRef.current,
+      formRef.current,
+      footerRef.current
+    ], {
+      opacity: 1,
+      y: 0,
+      duration: 0.6,
+      ease: "power2.out",
+      stagger: 0.15
+    })
+  }, { dependencies: [], scope: container })
+
   if (isSuccess) {
     return (
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center px-4">
@@ -87,9 +116,9 @@ export default function NewPasswordPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center px-4">
+    <div ref={container} className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center px-4">
       <div className="max-w-md w-full space-y-8 bg-white dark:bg-[#23244a] p-8 rounded-xl shadow-lg">
-        <div className="text-center">
+        <div ref={headerRef} className="text-center">
           <Link href="/auth/forgot-password">
             <ArrowLeft className="h-6 w-6 text-gray-600 mx-auto mb-4" />
           </Link>
@@ -97,64 +126,68 @@ export default function NewPasswordPage() {
           <h2 className="mt-6 text-2xl font-bold text-gray-900">Create New Password</h2>
           <p className="mt-2 text-gray-600">Your new password must be different from previously used passwords.</p>
         </div>
-
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="relative">
-            <Input
-              type={showPassword ? "text" : "password"}
-              label="New Password"
-              placeholder="Enter new password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              error={errors.password}
-            />
-            <button
-              type="button"
-              className="absolute right-3 top-9 text-gray-400 hover:text-gray-600"
-              onClick={() => setShowPassword(!showPassword)}
-            >
-              {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
-            </button>
-          </div>
-
-          <div className="relative">
-            <Input
-              type={showConfirmPassword ? "text" : "password"}
-              label="Confirm Password"
-              placeholder="Confirm new password"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              error={errors.confirmPassword}
-            />
-            <button
-              type="button"
-              className="absolute right-3 top-9 text-gray-400 hover:text-gray-600"
-              onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-            >
-              {showConfirmPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
-            </button>
-          </div>
-
-          {/* Password Requirements */}
-          <div className="space-y-2">
-            <p className="text-sm font-medium text-gray-700">Password must contain:</p>
-            <div className="space-y-1">
-              {passwordRequirements.map((req, index) => {
-                const isValid = req.test(password)
-                return (
-                  <div key={index} className="flex items-center space-x-2">
-                    {isValid ? <Check className="h-4 w-4 text-green-500" /> : <X className="h-4 w-4 text-gray-300" />}
-                    <span className={`text-sm ${isValid ? "text-green-600" : "text-gray-500"}`}>{req.text}</span>
-                  </div>
-                )
-              })}
+        <div ref={formRef}>
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div className="relative">
+              <Input
+                type={showPassword ? "text" : "password"}
+                label="New Password"
+                placeholder="Enter new password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                error={errors.password}
+              />
+              <button
+                type="button"
+                className="absolute right-3 top-9 text-gray-400 hover:text-gray-600"
+                onClick={() => setShowPassword(!showPassword)}
+              >
+                {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+              </button>
             </div>
-          </div>
 
-          <Button type="submit" className="w-full" size="lg" disabled={isLoading}>
-            {isLoading ? "Updating..." : "Update Password"}
-          </Button>
-        </form>
+            <div className="relative">
+              <Input
+                type={showConfirmPassword ? "text" : "password"}
+                label="Confirm Password"
+                placeholder="Confirm new password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                error={errors.confirmPassword}
+              />
+              <button
+                type="button"
+                className="absolute right-3 top-9 text-gray-400 hover:text-gray-600"
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+              >
+                {showConfirmPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+              </button>
+            </div>
+
+            {/* Password Requirements */}
+            <div className="space-y-2">
+              <p className="text-sm font-medium text-gray-700">Password must contain:</p>
+              <div className="space-y-1">
+                {passwordRequirements.map((req, index) => {
+                  const isValid = req.test(password)
+                  return (
+                    <div key={index} className="flex items-center space-x-2">
+                      {isValid ? <Check className="h-4 w-4 text-green-500" /> : <X className="h-4 w-4 text-gray-300" />}
+                      <span className={`text-sm ${isValid ? "text-green-600" : "text-gray-500"}`}>{req.text}</span>
+                    </div>
+                  )
+                })}
+              </div>
+            </div>
+
+            <Button type="submit" className="w-full" size="lg" disabled={isLoading}>
+              {isLoading ? "Updating..." : "Update Password"}
+            </Button>
+          </form>
+        </div>
+        <div ref={footerRef}>
+          {/* ...footer links/buttons if any... */}
+        </div>
       </div>
     </div>
   )
