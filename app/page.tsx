@@ -124,10 +124,23 @@ export default function WalletOverview() {
           </div>
           <div className="flex items-center space-x-2">
             <ThemeToggle />
+            {/* Desktop: Cards button */}
             <Link href="/wallet/cards" className="hidden md:inline-block hover:text-gray-700">
               <Button variant="ghost" size="sm">
                 Cards
               </Button>
+            </Link>
+            {/* Mobile: Icon button with tooltip */}
+            <Link href="/wallet/cards" className="md:hidden relative group">
+              <Button variant="ghost" size="sm" className="p-2">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="h-5 w-5">
+                  <rect x="3" y="7" width="18" height="10" rx="2" className="fill-current text-gray-400 dark:text-gray-200" />
+                  <rect x="7" y="13" width="4" height="2" rx="1" className="fill-current text-gray-200 dark:text-gray-400" />
+                </svg>
+              </Button>
+              <span className="absolute left-1/2 -translate-x-1/2 mt-2 z-10 whitespace-nowrap rounded bg-gray-900 text-white text-xs px-2 py-1 opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity">
+                View All Cards
+              </span>
             </Link>
             <Button variant="ghost" size="sm" className="hover:text-gray-700" onClick={handleLogout}>
               <LogOut className="h-4 w-4" />
